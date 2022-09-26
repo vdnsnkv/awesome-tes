@@ -1,0 +1,49 @@
+@startuml LAYOUT_LANDSCAPE aTES Services
+!include <c4/C4_Context.puml>
+
+title aTES service diagram
+
+Person(popug, "Попуг")
+
+System(ui, "aTES UI", "Отображает все дэшборды и страницы с детализацией")
+
+SetPropertyHeader("path", "service")
+AddProperty("/api/auth", "User Service")
+AddProperty("/api/tasks", "Task Service")
+AddProperty("/api/accounts", "Accounting Service")
+AddProperty("/api/analytics", "Analytics Service")
+System(web_server, "Web server", "Роутит запросы на нужный бэкенд-сервис")
+
+
+System_Boundary(backend, "aTES Backend") {
+  System(user_service, "User Service", "Аутентификация, авторизация, управлением ролями пользователей")
+  rectangle "Main backend" as main_backend {
+      System(accounting_service, "Accounting Service", "Управляет учётом денег")
+      System(task_tracker, "Task Tracker", "Управляет задачами")
+      System(analytics, "Analytics Service", "Считает аналитику")
+  }
+  SystemDb(user_db, "User Service DB", "База данных с юзерами")
+
+  SystemDb(db, "Main DB", "Основная база данных")
+
+  System(email_service, "Email Service", "Отправляет письма")
+}
+
+' External systems
+System_Ext(external_email, "Email delivery service", "Mailgun, Postmark, и тд")
+System_Ext(external_billing, "Billing service", "Сервис для проведения выплат")
+
+' Relation links
+Rel(popug, ui, "Работает с системой через")
+Rel(ui, web_server, "Отправляет запросы и получает данные от", "HTTP")
+Rel(web_server, backend, "")
+Rel(main_backend, db, "Хранит данные в", "Tasks\nAccounts\nBalances\nTransactions")
+Rel(main_backend, user_service, "Авторизует запросы через")
+Rel(task_tracker, accounting_service, "Отправляет данные о новых и измененных тасках в", "Task")
+Rel(accounting_service, email_service, "Кладет в очередь задания на отправку писем с суммой за день")
+Rel(accounting_service, external_billing, "Делает выплаты с помощью", "HTTP")
+Rel(user_service, user_db, "Хранит данные в", "Users")
+Rel(email_service, external_email, "Отправляет письма с помощью", "HTTP")
+
+
+@enduml
