@@ -1,6 +1,6 @@
 # Awesome Task Exchange System 
 
-![](./ates-system.svg)
+![](ates-system.svg)
 
 ### Описание сервисов
 
