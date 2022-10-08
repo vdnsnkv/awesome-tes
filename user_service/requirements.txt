@@ -1,0 +1,9 @@
+bcrypt==4.0.0
+Flask==2.2.2
+Flask-Cors==3.0.10
+Flask-Migrate==3.1.0
+psycopg2-binary==2.9.4
+pydantic==1.10.2
+PyJWT==2.5.0
+python-json-logger==2.0.4
+SQLAlchemy==1.4.41

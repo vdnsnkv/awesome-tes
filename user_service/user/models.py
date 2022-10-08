@@ -11,7 +11,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
-from db import Base
+from user_service.db import Base
 
 
 class User(Base):
@@ -28,10 +28,12 @@ class User(Base):
     public_id = Column(
         UUID(as_uuid=True),
         server_default=text("md5(random()::text || clock_timestamp()::text)::uuid"),
+        nullable=False,
     )
     email = Column(String, unique=True, nullable=False)
     bcrypt_hash = Column(LargeBinary, nullable=False)
 
+    name = Column(String)
     role = Column(String, default="default")
 
     meta = Column(JSONB)
