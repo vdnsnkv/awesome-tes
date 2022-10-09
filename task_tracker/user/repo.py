@@ -7,7 +7,8 @@ class UserRepo:
     def __init__(self, db):
         self.db = db
 
-    def add_user(self, user: User):
+    def add_user(self, data: dict):
+        user = User(**data)
         self.db.session.add(user)
         self.db.session.commit()
         return user
@@ -18,7 +19,9 @@ class UserRepo:
     def get_all_users(self):
         return self.db.session.query(User).all()
 
-    def update_user(self, user: User):
+    def update_user(self, user: User, new_data: dict):
+        for k, v in new_data.items():
+            setattr(user, k, v)
         self.db.session.add(user)
         self.db.session.commit()
         return user

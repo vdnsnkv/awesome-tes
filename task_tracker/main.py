@@ -9,9 +9,13 @@ if __package__ is None:
     sys.path.insert(0, DIR)
 
 from app import create_app
+from user_cud_consumer import UserCUDEventsConsumer
 
 
 if __name__ == "__main__":
     app = create_app()
 
-    app.run(host="0.0.0.0", port=5050, threaded=True, use_reloader=True)
+    user_cud_consumer = UserCUDEventsConsumer(app)
+    user_cud_consumer.start()
+
+    app.run(host="0.0.0.0", port=5051, threaded=True, use_reloader=True)

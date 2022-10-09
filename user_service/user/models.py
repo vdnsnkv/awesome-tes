@@ -47,5 +47,13 @@ class User(Base):
         server_onupdate=func.now(),
     )
 
+    def to_dict(self):
+        return {
+            "public_id": str(self.public_id),
+            "email": self.email,
+            "name": self.name,
+            "role": self.role,
+        }
+
     def __repr__(self):
         return f"<{self.__class__.__name__} public_id={self.public_id}>"
