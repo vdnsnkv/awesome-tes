@@ -1,28 +1,26 @@
 import enum
 from datetime import datetime
+
 from sqlalchemy import (
-    Integer,
     Column,
     String,
     DateTime,
     func,
-    LargeBinary,
     text,
+    Integer,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
-from user_service.db import Base
+from task_tracker.db import Base
 
 
-class User(Base):
-    __tablename__ = "user"
+class Task(Base):
+    __tablename__ = "task"
 
     @enum.unique
-    class Role(enum.Enum):
-        DEFAULT = "default"
-        ACCOUNTANT = "accountant"
-        MANAGER = "manager"
-        ADMIN = "admin"
+    class Status(enum.Enum):
+        TODO = "todo"
+        DONE = "done"
 
     id = Column(Integer, primary_key=True)
     public_id = Column(
@@ -30,11 +28,11 @@ class User(Base):
         server_default=text("md5(random()::text || clock_timestamp()::text)::uuid"),
         nullable=False,
     )
-    email = Column(String, unique=True, nullable=False)
-    bcrypt_hash = Column(LargeBinary, nullable=False)
 
-    name = Column(String)
-    role = Column(String, default="default")
+    user_id = Column(UUID(as_uuid=True))
+    title = Column(String)
+    description = Column(String)
+    status = Column(String, default="todo")
 
     meta = Column(JSONB)
 

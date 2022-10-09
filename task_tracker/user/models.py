@@ -1,17 +1,16 @@
 import enum
 from datetime import datetime
+
 from sqlalchemy import (
-    Integer,
     Column,
     String,
     DateTime,
     func,
-    LargeBinary,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
-from user_service.db import Base
+from task_tracker.db import Base
 
 
 class User(Base):
@@ -24,14 +23,13 @@ class User(Base):
         MANAGER = "manager"
         ADMIN = "admin"
 
-    id = Column(Integer, primary_key=True)
     public_id = Column(
         UUID(as_uuid=True),
+        primary_key=True,
         server_default=text("md5(random()::text || clock_timestamp()::text)::uuid"),
         nullable=False,
     )
     email = Column(String, unique=True, nullable=False)
-    bcrypt_hash = Column(LargeBinary, nullable=False)
 
     name = Column(String)
     role = Column(String, default="default")
