@@ -53,6 +53,9 @@ class User(Base):
             "email": self.email,
             "name": self.name,
             "role": self.role,
+            "meta": self.meta,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
 
     def __repr__(self):

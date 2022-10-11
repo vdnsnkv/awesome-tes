@@ -5,13 +5,13 @@ from pydantic import BaseModel
 
 from user_service.user.models import User
 
-USER_CUD_TOPIC_NAME = "user-service.user-cud.v1"
+USER_CUD_TOPIC_NAME = "user-streaming"
 
 
 class UserCUDEventType(str, enum.Enum):
-    Created = "User.Created"
-    Updated = "User.Updated"
-    Deleted = "User.Deleted"
+    Created = "UserCreated"
+    Updated = "UserUpdated"
+    Deleted = "UserDeleted"
 
 
 class UserCUDEvent(BaseModel):
