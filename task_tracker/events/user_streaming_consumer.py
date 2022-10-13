@@ -1,14 +1,8 @@
-import json
-
 from confluent_kafka import Message
 
 from py_lib import DataStreamingConsumer
 
-from .user_cud import (
-    USER_CUD_TOPIC_NAME,
-    UserCUDEventType,
-    UserCUDEvent,
-)
+from .user_streaming import UserCUDEventType
 
 
 class UserStreamingConsumer(DataStreamingConsumer):

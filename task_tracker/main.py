@@ -8,10 +8,11 @@ if __package__ is None:
     DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, DIR)
 
-from py_lib import KafkaConsumerConfig
+from py_lib import KafkaConsumerConfig, KafkaProducerConfig
 
 from app import create_app
 from task_tracker.events import UserCUDEvent, UserStreamingConsumer
+from task_tracker.events import TaskStreamingProducer
 
 USER_CUD_TOPIC_NAME = "user-streaming"
 CONSUMER_CONFIG = KafkaConsumerConfig(
@@ -24,11 +25,27 @@ CONSUMER_CONFIG = KafkaConsumerConfig(
     },
 )
 
+TASK_CUD_TOPIC_NAME = "task-streaming"
+PRODUCER_CONFIG = KafkaProducerConfig(
+    brokers="kafka:9092",
+    client_id="task-tracker-producer",
+    params={
+        "log_level": 7,
+    },
+)
+
 
 if __name__ == "__main__":
     app = create_app()
 
     user_cud_consumer = UserStreamingConsumer(app, UserCUDEvent, CONSUMER_CONFIG)
     user_cud_consumer.start()
+
+    task_streaming = TaskStreamingProducer(
+        TASK_CUD_TOPIC_NAME, **PRODUCER_CONFIG.dict()
+    )
+    task_streaming.start()
+
+    app.task_streaming = task_streaming
 
     app.run(host="0.0.0.0", port=5051, threaded=True, use_reloader=True)

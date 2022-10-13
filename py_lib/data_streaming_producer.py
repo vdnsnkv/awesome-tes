@@ -9,7 +9,7 @@ class DataStreamingProducer:
         self.topic = topic
         self.producer = KafkaProducer(**kafka_config.dict())
 
-    def send_event(self, event: BaseModel):
+    def produce_event(self, event: BaseModel):
         self.producer.produce(self.topic, event.json())
         return
 
