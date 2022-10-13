@@ -8,9 +8,10 @@ if __package__ is None:
     DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, DIR)
 
-from py_lib import KafkaProducer
+from py_lib import KafkaProducerConfig
 
 from app import create_app
+from events import UserStreamingProducer
 
 # SYSLOG_LEVELS = {
 #     "CRITICAL": 2,
@@ -22,21 +23,24 @@ from app import create_app
 #     "DEBUG": 7,
 # }
 
-PRODUCER_CONFIG = {
-    "brokers": "kafka:9092",
-    "client_id": "user-service-producer",
-    "params": {
+USER_CUD_TOPIC_NAME = "user-streaming"
+PRODUCER_CONFIG = KafkaProducerConfig(
+    brokers="kafka:9092",
+    client_id="user-service-producer",
+    params={
         "log_level": 7,
     },
-}
+)
 
 
 if __name__ == "__main__":
     app = create_app()
 
-    kafka_producer = KafkaProducer(**PRODUCER_CONFIG)
-    kafka_producer.start()
+    user_streaming = UserStreamingProducer(
+        USER_CUD_TOPIC_NAME, **PRODUCER_CONFIG.dict()
+    )
+    user_streaming.start()
 
-    app.producer = kafka_producer
+    app.user_streaming = user_streaming
 
     app.run(host="0.0.0.0", port=5050, threaded=True, use_reloader=True)

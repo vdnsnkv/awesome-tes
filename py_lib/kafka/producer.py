@@ -3,6 +3,8 @@ from threading import Thread
 
 from confluent_kafka import Producer
 
+from .config import KafkaProducerConfig
+
 PRODUCER_POLL_TIMEOUT = 0.1
 
 logger = logging.getLogger(__name__)
@@ -10,16 +12,13 @@ logger.setLevel(logging.DEBUG)
 
 
 class KafkaProducer(object):
-    def __init__(self, brokers: str, client_id: str, params: dict = None):
-        if params is None:
-            params = {}
-
+    def __init__(self, config: KafkaProducerConfig):
         self._producer = Producer(
             {
-                "bootstrap.servers": brokers,
-                "client.id": client_id,
+                "bootstrap.servers": config.brokers,
+                "client.id": config.client_id,
                 "logger": logger,
-                **params,
+                **config.params,
             }
         )
         self._is_polling = False

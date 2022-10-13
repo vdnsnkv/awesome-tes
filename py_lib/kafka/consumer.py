@@ -3,6 +3,8 @@ from threading import Thread
 
 from confluent_kafka import Consumer
 
+from .config import KafkaConsumerConfig
+
 CONSUMER_POLL_TIMEOUT = 0.1
 
 logger = logging.getLogger(__name__)
@@ -12,24 +14,18 @@ logger.setLevel(logging.DEBUG)
 class KafkaConsumer(object):
     def __init__(
         self,
-        brokers: str,
-        group_id: str,
-        topics: list,
+        config: KafkaConsumerConfig,
         process_message: callable,
-        params: dict = None,
     ):
-        if params is None:
-            params = {}
-
         self._consumer = Consumer(
             {
-                "bootstrap.servers": brokers,
-                "group.id": group_id,
+                "bootstrap.servers": config.brokers,
+                "group.id": config.group_id,
                 "logger": logger,
-                **params,
+                **config.params,
             }
         )
-        self._consumer.subscribe(topics)
+        self._consumer.subscribe(config.topics)
 
         self._process_message = process_message
         self._is_polling = False
