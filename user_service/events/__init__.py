@@ -1,2 +1,1 @@
-from .user_streaming_producer import UserStreamingProducer
 from .user_streaming import UserCUDEventType

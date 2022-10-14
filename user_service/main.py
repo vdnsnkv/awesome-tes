@@ -11,7 +11,7 @@ if __package__ is None:
 from py_lib import KafkaProducerConfig
 
 from app import create_app
-from events import UserStreamingProducer
+from data_streaming import UserStreamingProducer
 
 # SYSLOG_LEVELS = {
 #     "CRITICAL": 2,
