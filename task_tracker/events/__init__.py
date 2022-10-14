@@ -1,2 +1,2 @@
-from .user_streaming import UserCUDEvent
-from .task_streaming import TaskCUDEvent, TaskCUDEventType
+from .user_streaming import UserStreamingEvent
+from .task_streaming import TaskStreamingEvent, TaskStreamingEventType

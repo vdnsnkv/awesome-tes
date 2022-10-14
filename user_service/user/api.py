@@ -3,7 +3,7 @@ from flask import request, Blueprint, current_app
 from user_service.responses import RESPONSE_404
 from user_service.decorators import admin_role_required
 
-from user_service.events import UserCUDEventType
+from user_service.events import UserStreamingEventType
 
 
 blueprint = Blueprint("users", __name__)
@@ -17,7 +17,7 @@ def create_user():
 
     user = current_app.user_repo.add_user(email, password)
 
-    current_app.user_streaming.send_event(user, UserCUDEventType.Created)
+    current_app.user_streaming.send_event(user, UserStreamingEventType.Created)
 
     return {"ok": True, "user_id": str(user.public_id), "email": user.email}
 
@@ -46,7 +46,7 @@ def update_user(public_id):
 
     user = current_app.user_repo.update_user(user, role, name)
 
-    current_app.user_streaming.send_event(user, UserCUDEventType.Updated)
+    current_app.user_streaming.send_event(user, UserStreamingEventType.Updated)
 
     return {
         "ok": True,

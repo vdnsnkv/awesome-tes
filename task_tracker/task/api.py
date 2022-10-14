@@ -3,7 +3,7 @@ from flask import request, Blueprint, current_app
 from task_tracker.user import is_user_manager, is_user_admin
 from task_tracker.responses import RESPONSE_404
 from task_tracker.decorators import admin_or_manager_role_required, auth_token_required
-from task_tracker.events import TaskCUDEventType
+from task_tracker.events import TaskStreamingEventType
 
 from .status import is_task_done
 from .utils import select_random_element
@@ -28,7 +28,7 @@ def create_task():
 
     task = current_app.task_repo.add_task(title, desc, assignee.public_id)
 
-    current_app.task_streaming.send_event(task, TaskCUDEventType.Created)
+    current_app.task_streaming.send_event(task, TaskStreamingEventType.Created)
 
     return {
         "ok": True,
@@ -93,7 +93,7 @@ def reassign_tasks():
         updated_tasks.append(task)
 
     for t in updated_tasks:
-        current_app.task_streaming.send_event(t, TaskCUDEventType.Updated)
+        current_app.task_streaming.send_event(t, TaskStreamingEventType.Updated)
 
     return [
         {

@@ -26,18 +26,18 @@
           "type": "object"
         },
         "created_at": {
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         },
         "updated_at": {
-          "type": "string"
+          "type": "string",
+          "format": "date-time"
         }
       },
       "required": [
         "public_id",
         "email",
-        "name",
         "role",
-        "meta",
         "created_at",
         "updated_at"
       ]

@@ -11,7 +11,7 @@ if __package__ is None:
 from py_lib import KafkaConsumerConfig, KafkaProducerConfig
 
 from app import create_app
-from task_tracker.events import UserCUDEvent
+from task_tracker.events import UserStreamingEvent
 from data_streaming import TaskStreamingProducer, UserStreamingConsumer
 
 USER_CUD_TOPIC_NAME = "user-streaming"
@@ -38,7 +38,7 @@ PRODUCER_CONFIG = KafkaProducerConfig(
 if __name__ == "__main__":
     app = create_app()
 
-    user_cud_consumer = UserStreamingConsumer(app, UserCUDEvent, CONSUMER_CONFIG)
+    user_cud_consumer = UserStreamingConsumer(app, UserStreamingEvent, CONSUMER_CONFIG)
     user_cud_consumer.start()
 
     task_streaming = TaskStreamingProducer(

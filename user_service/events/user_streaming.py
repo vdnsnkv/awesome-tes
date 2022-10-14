@@ -1,14 +1,13 @@
 import enum
 
-from pydantic import BaseModel
+from py_lib import Event
 
 
-class UserCUDEventType(str, enum.Enum):
+class UserStreamingEventType(str, enum.Enum):
     Created = "UserCreated"
     Updated = "UserUpdated"
     Deleted = "UserDeleted"
 
 
-class UserCUDEvent(BaseModel):
-    event_name: UserCUDEventType
-    data: dict
+class UserStreamingEvent(Event):
+    event_name: UserStreamingEventType

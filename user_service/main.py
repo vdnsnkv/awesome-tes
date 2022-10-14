@@ -8,7 +8,7 @@ if __package__ is None:
     DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, DIR)
 
-from py_lib import KafkaProducerConfig
+from py_lib import KafkaProducerConfig, SchemaRegistry
 
 from app import create_app
 from data_streaming import UserStreamingProducer
@@ -23,6 +23,8 @@ from data_streaming import UserStreamingProducer
 #     "DEBUG": 7,
 # }
 
+EVENT_SCHEMAS_DIR = "../event_schemas"
+
 USER_CUD_TOPIC_NAME = "user-streaming"
 PRODUCER_CONFIG = KafkaProducerConfig(
     brokers="kafka:9092",
@@ -36,8 +38,12 @@ PRODUCER_CONFIG = KafkaProducerConfig(
 if __name__ == "__main__":
     app = create_app()
 
+    schema_registry = SchemaRegistry(EVENT_SCHEMAS_DIR)
+
     user_streaming = UserStreamingProducer(
-        USER_CUD_TOPIC_NAME, **PRODUCER_CONFIG.dict()
+        USER_CUD_TOPIC_NAME,
+        PRODUCER_CONFIG,
+        schema_registry,
     )
     user_streaming.start()
 

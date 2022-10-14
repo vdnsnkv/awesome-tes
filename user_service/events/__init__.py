@@ -1,1 +1,1 @@
-from .user_streaming import UserCUDEventType
+from .user_streaming import UserStreamingEventType
