@@ -1,15 +1,17 @@
 import json
+import logging
 import typing as t
 from abc import ABC, abstractmethod
 
 from confluent_kafka import Message
-from pydantic import BaseModel
 
 from .kafka.config import KafkaConsumerConfig
 from .kafka.consumer import KafkaConsumer
 
 from .event import Event
 from .schema_registry import SchemaRegistry
+
+logger = logging.getLogger(__name__)
 
 
 class DataStreamingConsumer(ABC):
@@ -29,13 +31,16 @@ class DataStreamingConsumer(ABC):
         )
 
     def process_message(self, msg: Message):
-        data = json.loads(msg.value())
+        try:
+            data = json.loads(msg.value())
 
-        self.schema_registry.validate(data, data["event_name"], 1)
+            self.schema_registry.validate(data, data["event_name"], 1)
 
-        event = self.event_schema(**data)
+            event = self.event_schema(**data)
 
-        self.process_events(event)
+            self.process_events(event)
+        except Exception:
+            logger.exception("Message processing error")
 
         return
 
