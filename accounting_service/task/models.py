@@ -1,4 +1,3 @@
-import enum
 from datetime import datetime
 
 from sqlalchemy import (
@@ -6,33 +5,23 @@ from sqlalchemy import (
     String,
     DateTime,
     func,
-    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 from accounting_service.db import Base
 
 
-class User(Base):
-    __tablename__ = "user"
-
-    @enum.unique
-    class Role(enum.Enum):
-        DEFAULT = "default"
-        ACCOUNTANT = "accountant"
-        MANAGER = "manager"
-        ADMIN = "admin"
+class Task(Base):
+    __tablename__ = "task"
 
     public_id = Column(
         UUID(as_uuid=True),
         primary_key=True,
-        server_default=text("md5(random()::text || clock_timestamp()::text)::uuid"),
         nullable=False,
     )
-    email = Column(String, unique=True, nullable=False)
 
-    name = Column(String)
-    role = Column(String, default="default")
+    user_id = Column(UUID(as_uuid=True))
+    title = Column(String)
 
     meta = Column(JSONB)
 
