@@ -1,4 +1,4 @@
-from py_lib import DataStreamingProducer, Event
+from py_lib import DataStreamingProducer
 
 from user_service.user.models import User
 from user_service.events.user_streaming import (
@@ -26,6 +26,7 @@ class UserStreamingProducer(DataStreamingProducer):
     def send_event(self, user: User, event_type: UserStreamingEventType):
         event = UserStreamingEvent(
             event_name=event_type,
+            producer=self.name,
             data=user_to_event_data(user),
         )
         self.validate_event(event)

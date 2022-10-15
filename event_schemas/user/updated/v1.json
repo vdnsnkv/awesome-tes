@@ -19,7 +19,6 @@
           "type": "string"
         },
         "role": {
-          "type": "string",
           "enum": ["default", "accountant", "manager", "admin"]
         },
         "meta": {
@@ -47,7 +46,12 @@
   "type": "object",
 
   "properties": {
+    "event_id":      { "type": "string" },
+    "event_version": { "enum": [1] },
     "event_name":    { "type": "string" },
+    "event_time":    { "type": "string" },
+    "producer":      { "type": "string" },
+
     "data": { "$ref": "#/definitions/event_data" }
   },
 

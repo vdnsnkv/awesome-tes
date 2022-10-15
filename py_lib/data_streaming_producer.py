@@ -13,6 +13,7 @@ class DataStreamingProducer:
         schema_registry: SchemaRegistry,
     ):
         self.topic = topic
+        self.name = kafka_config.client_id
         self.producer = KafkaProducer(kafka_config)
         self.schema_registry = schema_registry
 

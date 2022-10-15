@@ -26,6 +26,7 @@ class TaskStreamingProducer(DataStreamingProducer):
     def send_event(self, task: Task, event_type: TaskStreamingEventType):
         event = TaskStreamingEvent(
             event_name=event_type,
+            producer=self.name,
             data=task_to_event_data(task),
         )
         self.validate_event(event)
