@@ -1,6 +1,6 @@
 import enum
 
-from pydantic import BaseModel
+from py_lib import Event
 
 
 class TaskStreamingEventType(str, enum.Enum):
@@ -9,6 +9,5 @@ class TaskStreamingEventType(str, enum.Enum):
     Deleted = "TaskDeleted"
 
 
-class TaskStreamingEvent(BaseModel):
+class TaskStreamingEvent(Event):
     event_name: TaskStreamingEventType
-    data: dict

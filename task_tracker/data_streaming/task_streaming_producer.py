@@ -7,11 +7,27 @@ from task_tracker.events.task_streaming import (
 )
 
 
+def task_to_event_data(task: Task):
+    data = {
+        "public_id": str(task.public_id),
+        "user_id": str(task.user_id),
+        "title": task.title,
+        "description": task.description,
+        "status": task.status,
+        "created_at": task.created_at.isoformat(),
+        "updated_at": task.updated_at.isoformat(),
+    }
+    if task.meta:
+        data["meta"] = task.meta
+    return data
+
+
 class TaskStreamingProducer(DataStreamingProducer):
     def send_event(self, task: Task, event_type: TaskStreamingEventType):
         event = TaskStreamingEvent(
             event_name=event_type,
-            data=task.to_dict(),
+            data=task_to_event_data(task),
         )
+        self.validate_event(event)
         self.produce_event(event)
         return
