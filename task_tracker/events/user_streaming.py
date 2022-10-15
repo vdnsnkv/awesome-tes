@@ -1,6 +1,6 @@
 import enum
 
-from pydantic import BaseModel
+from py_lib import Event
 
 
 class UserStreamingEventType(str, enum.Enum):
@@ -9,6 +9,5 @@ class UserStreamingEventType(str, enum.Enum):
     Deleted = "UserDeleted"
 
 
-class UserStreamingEvent(BaseModel):
+class UserStreamingEvent(Event):
     event_name: UserStreamingEventType
-    data: dict
