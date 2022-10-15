@@ -1,15 +1,26 @@
 from flask import request, Blueprint, current_app
 
 from task_tracker.user import is_user_manager, is_user_admin
-from task_tracker.responses import RESPONSE_404
+from task_tracker.responses import RESPONSE_404, RESPONSE_400
 from task_tracker.decorators import admin_or_manager_role_required, auth_token_required
-from task_tracker.events import TaskStreamingEventType
+from task_tracker.events import TaskEventType
 
 from .status import is_task_done
 from .utils import select_random_element
+from .models import Task
 
 
 blueprint = Blueprint("tasks", __name__)
+
+
+def task_to_response(task: Task):
+    return {
+        "task_id": str(task.public_id),
+        "title": task.title,
+        "desc": task.description,
+        "status": task.status,
+        "user_id": str(task.user_id),
+    }
 
 
 @blueprint.route("/tasks", methods=["POST"])
@@ -28,14 +39,12 @@ def create_task():
 
     task = current_app.task_repo.add_task(title, desc, assignee.public_id)
 
-    current_app.task_streaming.send_event(task, TaskStreamingEventType.Created)
+    current_app.task_streaming.send_event(task, TaskEventType.Created)
+    current_app.task_events.send_event(task, TaskEventType.TaskAdded)
 
     return {
         "ok": True,
-        "task_id": str(task.public_id),
-        "title": task.title,
-        "desc": task.description,
-        "status": task.status,
+        **task_to_response(task),
     }
 
 
@@ -48,11 +57,31 @@ def read_task(public_id):
 
     return {
         "ok": True,
-        "task_id": str(task.public_id),
-        "title": task.title,
-        "desc": task.description,
-        "status": task.status,
-        "user_id": str(task.user_id),
+        **task_to_response(task),
+    }
+
+
+@blueprint.route("/tasks/<public_id>", methods=["PATCH"])
+@auth_token_required
+def update_task(public_id):
+    task = current_app.task_repo.get_task(public_id)
+    if task is None:
+        return RESPONSE_404
+
+    if "status" not in request.json:
+        return RESPONSE_400
+
+    status = request.json["status"]
+    if "status" != "done":
+        return RESPONSE_400
+
+    task = current_app.task_repo.update_task(task, status=status)
+
+    current_app.task_events.send_event(task, TaskEventType.TaskDone)
+
+    return {
+        "ok": True,
+        **task_to_response(task),
     }
 
 
@@ -61,16 +90,7 @@ def read_task(public_id):
 def read_all_tasks():
     all_tasks = current_app.task_repo.get_all_tasks()
 
-    return [
-        {
-            "task_id": str(task.public_id),
-            "title": task.title,
-            "desc": task.description,
-            "status": task.status,
-            "user_id": str(task.user_id),
-        }
-        for task in all_tasks
-    ]
+    return [task_to_response(task) for task in all_tasks]
 
 
 @blueprint.route("/tasks", methods=["PATCH"])
@@ -93,15 +113,7 @@ def reassign_tasks():
         updated_tasks.append(task)
 
     for t in updated_tasks:
-        current_app.task_streaming.send_event(t, TaskStreamingEventType.Updated)
+        current_app.task_streaming.send_event(t, TaskEventType.Updated)
+        current_app.task_events.send_event(t, TaskEventType.TaskAssigned)
 
-    return [
-        {
-            "task_id": str(task.public_id),
-            "title": task.title,
-            "desc": task.description,
-            "status": task.status,
-            "user_id": str(task.user_id),
-        }
-        for task in updated_tasks
-    ]
+    return [task_to_response(task) for task in updated_tasks]

@@ -12,7 +12,7 @@ from py_lib import KafkaConsumerConfig, KafkaProducerConfig, SchemaRegistry
 
 from app import create_app
 from task_tracker.events import UserStreamingEvent
-from data_streaming import TaskStreamingProducer, UserStreamingConsumer
+from events_streaming import TaskStreamingProducer, UserStreamingConsumer, TaskProducer
 
 EVENT_SCHEMAS_DIR = "../event_schemas"
 
@@ -28,6 +28,7 @@ CONSUMER_CONFIG = KafkaConsumerConfig(
 )
 
 TASK_CUD_TOPIC_NAME = "task-streaming"
+TASK_EVENTS_TOPIC_NAME = "task-events"
 PRODUCER_CONFIG = KafkaProducerConfig(
     brokers="kafka:9092",
     client_id="task-tracker-producer",
@@ -57,6 +58,14 @@ if __name__ == "__main__":
     )
     task_streaming.start()
 
+    task_events = TaskProducer(
+        TASK_EVENTS_TOPIC_NAME,
+        PRODUCER_CONFIG,
+        schema_registry,
+    )
+    task_events.start()
+
     app.task_streaming = task_streaming
+    app.task_events = task_events
 
     app.run(host="0.0.0.0", port=5051, threaded=True, use_reloader=True)

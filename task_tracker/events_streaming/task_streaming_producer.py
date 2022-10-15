@@ -1,9 +1,9 @@
 from py_lib import DataStreamingProducer
 
 from task_tracker.task.models import Task
-from task_tracker.events.task_streaming import (
-    TaskStreamingEvent,
-    TaskStreamingEventType,
+from task_tracker.events.task import (
+    TaskEvent,
+    TaskEventType,
 )
 
 
@@ -23,8 +23,8 @@ def task_to_event_data(task: Task):
 
 
 class TaskStreamingProducer(DataStreamingProducer):
-    def send_event(self, task: Task, event_type: TaskStreamingEventType):
-        event = TaskStreamingEvent(
+    def send_event(self, task: Task, event_type: TaskEventType):
+        event = TaskEvent(
             event_name=event_type,
             producer=self.name,
             data=task_to_event_data(task),
