@@ -5,8 +5,8 @@ from abc import ABC, abstractmethod
 from confluent_kafka import Message
 from pydantic import BaseModel
 
-from kafka.config import KafkaConsumerConfig
-from kafka.consumer import KafkaConsumer
+from .kafka.config import KafkaConsumerConfig
+from .kafka.consumer import KafkaConsumer
 
 
 class DataStreamingConsumer(ABC):
