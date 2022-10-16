@@ -24,11 +24,11 @@ class DataStreamingConsumer(ABC):
     ):
         self.app = app
         self.event_schema = event_schema
-        self.schema_registry = schema_registry
         self.consumer = KafkaConsumer(
             kafka_config,
             process_message=self.process_message,
         )
+        self.schema_registry = schema_registry
 
     def process_message(self, msg: Message):
         try:
