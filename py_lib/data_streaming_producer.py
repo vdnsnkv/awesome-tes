@@ -1,9 +1,6 @@
 from .kafka.config import KafkaProducerConfig
 from .kafka.producer import KafkaProducer
 
-from .event import Event
-from .schema_registry import SchemaRegistry
-
 
 class DataStreamingProducer:
     def __init__(
@@ -15,11 +12,9 @@ class DataStreamingProducer:
         self.topic = topic
         self.name = kafka_config.client_id
         self.producer = KafkaProducer(kafka_config)
-        self.schema_registry = schema_registry
 
     def validate_event(self, event: Event):
-        self.schema_registry.validate(event.dict(), event.event_name.value, 1)
-        return
+        pass
 
     def produce_event(self, event: Event):
         self.producer.produce(self.topic, event.json())
