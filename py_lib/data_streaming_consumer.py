@@ -34,7 +34,11 @@ class DataStreamingConsumer(ABC):
         try:
             data = json.loads(msg.value())
 
-            self.schema_registry.validate(data, data["event_name"], 1)
+            self.schema_registry.validate(
+                data,
+                data["event_name"],
+                data.get("event_version", 1),
+            )
 
             event = self.event_schema(**data)
 

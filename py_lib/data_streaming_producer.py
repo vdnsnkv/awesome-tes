@@ -18,7 +18,11 @@ class DataStreamingProducer:
         self.schema_registry = schema_registry
 
     def validate_event(self, event: Event):
-        self.schema_registry.validate(event.dict(), event.event_name.value, 1)
+        self.schema_registry.validate(
+            event.dict(),
+            event.event_name.value,
+            event.event_version,
+        )
         return
 
     def produce_event(self, event: Event):
