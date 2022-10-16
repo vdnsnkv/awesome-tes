@@ -18,6 +18,7 @@ def task_to_response_data(task: Task):
     return {
         "task_id": str(task.public_id),
         "title": task.title,
+        "jira_id": task.jira_id,
         "description": task.description,
         "status": task.status,
         "assign_price": task.assign_price,

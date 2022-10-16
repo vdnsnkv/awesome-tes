@@ -21,6 +21,7 @@ class Task(Base):
 
     user_id = Column(UUID(as_uuid=True))
     title = Column(String)
+    jira_id = Column(String)
     description = Column(String)
     status = Column(String)
 
