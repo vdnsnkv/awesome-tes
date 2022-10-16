@@ -6,7 +6,7 @@ from task_tracker.decorators import admin_or_manager_role_required, auth_token_r
 from task_tracker.events import TaskEventType
 
 from .status import is_task_done
-from .utils import select_random_element
+from .utils import select_random_element, parse_title
 from .models import Task
 
 
@@ -17,6 +17,7 @@ def task_to_response(task: Task):
     return {
         "task_id": str(task.public_id),
         "title": task.title,
+        "jira_id": task.jira_id,
         "desc": task.description,
         "status": task.status,
         "user_id": str(task.user_id),
@@ -29,6 +30,8 @@ def create_task():
     title = request.json["title"]
     desc = request.json["desc"]
 
+    jira_id, title = parse_title(title)
+
     all_users = current_app.user_repo.get_all_users()
 
     assignee_candidates = [
@@ -37,10 +40,12 @@ def create_task():
 
     assignee = select_random_element(assignee_candidates)
 
-    task = current_app.task_repo.add_task(title, desc, assignee.public_id)
+    task = current_app.task_repo.add_task(
+        title, desc, assignee.public_id, jira_id=jira_id
+    )
 
     current_app.task_streaming.send_event(task, TaskEventType.Created)
-    current_app.task_events.send_event(task, TaskEventType.TaskAdded)
+    current_app.task_events.send_event(task, TaskEventType.TaskAdded, 2)
 
     return {
         "ok": True,

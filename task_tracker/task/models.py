@@ -31,6 +31,7 @@ class Task(Base):
 
     user_id = Column(UUID(as_uuid=True))
     title = Column(String)
+    jira_id = Column(String)
     description = Column(String)
     status = Column(String, default="todo")
 
@@ -44,18 +45,6 @@ class Task(Base):
         onupdate=datetime.now,
         server_onupdate=func.now(),
     )
-
-    def to_dict(self):
-        return {
-            "public_id": str(self.public_id),
-            "user_id": str(self.user_id),
-            "title": self.title,
-            "description": self.description,
-            "status": self.status,
-            "meta": self.meta,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-        }
 
     def __repr__(self):
         return f"<{self.__class__.__name__} public_id={self.public_id}>"

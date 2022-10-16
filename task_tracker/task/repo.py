@@ -12,11 +12,13 @@ class TaskRepo:
         title: str,
         desc: str,
         user_id: uuid.UUID,
+        jira_id: str = None,
     ):
         task = Task(
             title=title,
             description=desc,
             user_id=user_id,
+            jira_id=jira_id,
         )
         self.db.session.add(task)
         self.db.session.commit()
