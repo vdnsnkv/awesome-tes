@@ -71,11 +71,10 @@ def update_task(public_id):
     if "status" not in request.json:
         return RESPONSE_400
 
-    status = request.json["status"]
-    if "status" != "done":
+    if request.json["status"] != "done":
         return RESPONSE_400
 
-    task = current_app.task_repo.update_task(task, status=status)
+    task = current_app.task_repo.update_task(task, status=request.json["status"])
 
     current_app.task_events.send_event(task, TaskEventType.TaskDone)
 

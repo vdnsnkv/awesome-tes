@@ -25,3 +25,9 @@ class UserRepo:
         self.db.session.add(user)
         self.db.session.commit()
         return user
+
+    def update_user_balance(self, user: User, amount: int):
+        user.balance += amount
+        self.db.session.add(user)
+        self.db.session.commit()
+        return user

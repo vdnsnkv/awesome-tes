@@ -12,6 +12,7 @@ def task_to_event_data(task: Task, event_type: TaskEventType):
         return {
             "public_id": str(task.public_id),
             "user_id": str(task.user_id),
+            "title": task.title,
         }
     if event_type == TaskEventType.TaskAssigned:
         return {

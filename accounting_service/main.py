@@ -8,16 +8,18 @@ if __package__ is None:
     DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     sys.path.insert(0, DIR)
 
-from py_lib import KafkaConsumerConfig
+from py_lib import KafkaConsumerConfig, SchemaRegistry
 
 from app import create_app
-from events import UserCUDEvent, UserStreamingConsumer
-from events import TaskCUDEvent, TaskStreamingConsumer
+from events import UserEvent, UserConsumer
+from events import TaskEvent, TaskConsumer
+
+EVENT_SCHEMAS_DIR = "../event_schemas"
 
 USER_CUD_TOPIC_NAME = "user-streaming"
 USER_CONSUMER_CONFIG = KafkaConsumerConfig(
     brokers="kafka:9092",
-    group_id="accounting-service-user-cud-consumer",
+    group_id="accounting-service",
     topics=[USER_CUD_TOPIC_NAME],
     params={
         "log_level": 7,
@@ -26,10 +28,11 @@ USER_CONSUMER_CONFIG = KafkaConsumerConfig(
 )
 
 TASK_CUD_TOPIC_NAME = "task-streaming"
+TASK_EVENTS_TOPIC_NAME = "task-events"
 TASK_CONSUMER_CONFIG = KafkaConsumerConfig(
     brokers="kafka:9092",
-    group_id="accounting-service-task-cud-consumer",
-    topics=[TASK_CUD_TOPIC_NAME],
+    group_id="accounting-service",
+    topics=[TASK_CUD_TOPIC_NAME, TASK_EVENTS_TOPIC_NAME],
     params={
         "log_level": 7,
         "auto.offset.reset": "earliest",
@@ -40,10 +43,16 @@ TASK_CONSUMER_CONFIG = KafkaConsumerConfig(
 if __name__ == "__main__":
     app = create_app()
 
-    user_cud_consumer = UserStreamingConsumer(app, UserCUDEvent, USER_CONSUMER_CONFIG)
+    schema_registry = SchemaRegistry(EVENT_SCHEMAS_DIR)
+
+    user_cud_consumer = UserConsumer(
+        app, UserEvent, USER_CONSUMER_CONFIG, schema_registry
+    )
     user_cud_consumer.start()
 
-    task_cud_consumer = TaskStreamingConsumer(app, TaskCUDEvent, TASK_CONSUMER_CONFIG)
+    task_cud_consumer = TaskConsumer(
+        app, TaskEvent, TASK_CONSUMER_CONFIG, schema_registry
+    )
     task_cud_consumer.start()
 
-    app.run(host="0.0.0.0", port=5051, threaded=True, use_reloader=True)
+    app.run(host="0.0.0.0", port=5052, threaded=True, use_reloader=True)

@@ -2,7 +2,7 @@ from confluent_kafka import Message
 
 from py_lib import DataStreamingConsumer
 
-from task_tracker.events.user_streaming import UserStreamingEventType
+from task_tracker.events.user import UserStreamingEventType
 
 
 class UserStreamingConsumer(DataStreamingConsumer):

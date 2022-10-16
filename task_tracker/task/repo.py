@@ -22,6 +22,15 @@ class TaskRepo:
         self.db.session.commit()
         return task
 
+    def get_task(self, public_id: str):
+        return (
+            self.db.session.query(Task)
+            .filter(
+                Task.public_id == uuid.UUID(public_id),
+            )
+            .first()
+        )
+
     def get_all_tasks(self):
         return self.db.session.query(Task).all()
 

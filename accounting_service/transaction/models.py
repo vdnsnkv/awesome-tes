@@ -1,41 +1,31 @@
-import enum
 from datetime import datetime
 
 from sqlalchemy import (
     Column,
-    String,
     DateTime,
     func,
+    BigInteger,
     text,
-    Integer,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 from accounting_service.db import Base
 
 
-class User(Base):
-    __tablename__ = "user"
+class Transaction(Base):
+    __tablename__ = "transaction"
 
-    @enum.unique
-    class Role(enum.Enum):
-        DEFAULT = "default"
-        ACCOUNTANT = "accountant"
-        MANAGER = "manager"
-        ADMIN = "admin"
-
+    id = Column(BigInteger, primary_key=True)
     public_id = Column(
         UUID(as_uuid=True),
-        primary_key=True,
         server_default=text("md5(random()::text || clock_timestamp()::text)::uuid"),
         nullable=False,
     )
-    email = Column(String, unique=True)
 
-    name = Column(String)
-    role = Column(String, default="default")
+    user_id = Column(UUID(as_uuid=True))
+    task_id = Column(UUID(as_uuid=True))
 
-    balance = Column(Integer, default=0)
+    amount = Column(BigInteger, nullable=False)
 
     meta = Column(JSONB)
 
