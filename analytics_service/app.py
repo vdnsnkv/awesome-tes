@@ -3,11 +3,13 @@ from flask_cors import CORS
 
 from py_lib import init_app_logger
 
-from user_service.config import config
-from user_service.db import db, migrate
+from analytics_service.config import config
+from analytics_service.db import db, migrate
+from analytics_service.user import UserRepo
+from analytics_service.task import TaskRepo
+from analytics_service.transaction import TransactionRepo
 
-from user_service.auth import auth_api
-from user_service.user import UserRepo, user_api
+from analytics_service.api import blueprint as analytics_api
 
 
 def create_app():
@@ -20,9 +22,10 @@ def create_app():
     migrate.init_app(app, db)
 
     app.user_repo = UserRepo(db)
+    app.task_repo = TaskRepo(db)
+    app.transation_repo = TransactionRepo(db)
 
-    app.register_blueprint(auth_api)
-    app.register_blueprint(user_api)
+    app.register_blueprint(analytics_api)
 
     @app.route("/ping")
     def ping():

@@ -13,7 +13,7 @@ def create_app():
     app = Flask(config.app_name)
     app.config["SQLALCHEMY_DATABASE_URI"] = config.db_connstring
 
-    app.logger = init_app_logger(config.log_level)
+    # app.logger = init_app_logger(config.log_level)
 
     db.init_app(app)
     migrate.init_app(app, db)
