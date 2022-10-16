@@ -15,6 +15,8 @@ from events import UserEvent, UserConsumer
 from events import TaskEvent, TaskConsumer
 from events import TransactionStreamingProducer
 
+from accounting.payments_service import PaymentsService
+
 EVENT_SCHEMAS_DIR = "../event_schemas"
 
 USER_CUD_TOPIC_NAME = "user-streaming"
@@ -72,6 +74,9 @@ if __name__ == "__main__":
         app, TaskEvent, TASK_CONSUMER_CONFIG, schema_registry
     )
     task_cud_consumer.start()
+
+    payments_service = PaymentsService(app)
+    payments_service.start()
 
     app.transaction_streaming = transaction_streaming
 
