@@ -5,3 +5,5 @@ from .kafka.consumer import KafkaConsumer
 from .kafka.config import KafkaConsumerConfig, KafkaProducerConfig
 from .data_streaming_consumer import DataStreamingConsumer
 from .data_streaming_producer import DataStreamingProducer
+from .event import Event
+from .schema_registry import SchemaRegistry
