@@ -17,9 +17,6 @@
         "title": {
           "type": "string"
         },
-        "jira_id": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         },
@@ -42,7 +39,6 @@
         "public_id",
         "user_id",
         "title",
-        "jira_id",
         "description",
         "status",
         "created_at",

@@ -25,6 +25,7 @@ class Task(Base):
 
     user_id = Column(UUID(as_uuid=True))
     title = Column(String)
+    jira_id = Column(String)
 
     assign_price = Column(Integer, nullable=False, default=get_assign_price)
     done_price = Column(Integer, nullable=False, default=get_done_price)
