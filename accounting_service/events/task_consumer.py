@@ -10,7 +10,7 @@ from .task import TaskEventType
 
 class TaskConsumer(DataStreamingConsumer):
     def process_events(self, event: Event):
-        print(event.event_name)
+
         # data streaming
         if event.event_name == TaskEventType.Updated:
             with self.app.app_context():
@@ -36,15 +36,11 @@ class TaskConsumer(DataStreamingConsumer):
                 if task is None:
                     task = self.app.task_repo.add_task(event.data)
 
-                print(task)
-
                 user = self.app.user_repo.get_user(event.data["user_id"])
                 if user is None:
                     user = self.app.user_repo.add_user(
                         {"public_id": event.data["user_id"]}
                     )
-
-                print(user)
 
                 withdraw_money_from_user_account(
                     user, task.assign_price, task.public_id
