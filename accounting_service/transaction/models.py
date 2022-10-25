@@ -1,28 +1,21 @@
-import enum
 from datetime import datetime
 
 from sqlalchemy import (
     Column,
-    String,
     DateTime,
     func,
+    BigInteger,
     text,
-    Integer,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
-from task_tracker.db import Base
+from accounting_service.db import Base
 
 
-class Task(Base):
-    __tablename__ = "task"
+class Transaction(Base):
+    __tablename__ = "transaction"
 
-    @enum.unique
-    class Status(enum.Enum):
-        TODO = "todo"
-        DONE = "done"
-
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     public_id = Column(
         UUID(as_uuid=True),
         server_default=text("md5(random()::text || clock_timestamp()::text)::uuid"),
@@ -30,10 +23,9 @@ class Task(Base):
     )
 
     user_id = Column(UUID(as_uuid=True))
-    title = Column(String)
-    jira_id = Column(String)
-    description = Column(String)
-    status = Column(String, default="todo")
+    task_id = Column(UUID(as_uuid=True))
+
+    amount = Column(BigInteger, nullable=False)
 
     meta = Column(JSONB)
 

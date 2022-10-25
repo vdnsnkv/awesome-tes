@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     func,
     text,
+    Integer,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 
@@ -29,10 +30,12 @@ class User(Base):
         server_default=text("md5(random()::text || clock_timestamp()::text)::uuid"),
         nullable=False,
     )
-    email = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True)
 
     name = Column(String)
     role = Column(String, default="default")
+
+    balance = Column(Integer, default=0)
 
     meta = Column(JSONB)
 

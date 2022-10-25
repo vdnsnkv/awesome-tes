@@ -8,6 +8,9 @@ from confluent_kafka import Message
 from .kafka.config import KafkaConsumerConfig
 from .kafka.consumer import KafkaConsumer
 
+from .event import Event
+from .schema_registry import SchemaRegistry
+
 logger = logging.getLogger(__name__)
 
 
@@ -25,10 +28,17 @@ class DataStreamingConsumer(ABC):
             kafka_config,
             process_message=self.process_message,
         )
+        self.schema_registry = schema_registry
 
     def process_message(self, msg: Message):
         try:
             data = json.loads(msg.value())
+
+            self.schema_registry.validate(
+                data,
+                data["event_name"],
+                data.get("event_version", 1),
+            )
 
             event = self.event_schema(**data)
 
